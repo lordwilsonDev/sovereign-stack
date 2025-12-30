@@ -1,0 +1,93 @@
+#!/bin/bash
+# Sparse Axion RAG - Axiom Oracle Launcher
+
+PROJECT_DIR="/Users/lordwilson/sparse_axion_rag"
+VENV_PATH="$PROJECT_DIR/.venv"
+
+cd "$PROJECT_DIR"
+
+# Ensure venv is used
+source "$VENV_PATH/bin/activate"
+
+echo "🌌 SPARSE AXION RAG: THE FUNCTIONAL AXIOM ORACLE"
+echo "   Engineering Deterministic Safety & Predictive Insight"
+echo ""
+
+case "${1:-query}" in
+    query)
+        shift
+        if [ -z "$1" ]; then
+            echo "Usage: $0 query \"Your question here\""
+        else
+            python3 scripts/apps/oracle_cli.py "$@"
+        fi
+        ;;
+    fao)
+        shift
+        echo "🔮 Starting Functional Axiom Oracle..."
+        python3 scripts/apps/fao.py "$@"
+        ;;
+    ingest)
+        echo "🔄 Starting Google Docs Ingestion Pipeline..."
+        python3 scripts/ingestion/ingest_docs.py
+        ;;
+    detect)
+        echo "🧐 Running Axiom Inversion & Anomaly Detection..."
+        python3 scripts/analysis/detect_anomalies.py
+        ;;
+    test-model)
+        echo "🧪 Verifying BitNet b1.58 Sparse Oracle..."
+        python3 scripts/model/oracle_model.py
+        ;;
+    test-abind)
+        echo "🔮 Testing A-bind Runtime..."
+        python3 scripts/core/abind.py
+        ;;
+    test-mirror)
+        echo "🪞 Testing Falsification Mirror..."
+        python3 scripts/mirror/falsification_mirror.py
+        ;;
+    test-hardware)
+        echo "🔌 Testing Hardware Switchboard..."
+        python3 scripts/hardware/switchboard.py
+        ;;
+    test-sweat)
+        echo "🔬 Testing Liar's Sweat Probe..."
+        python3 scripts/sweat/liars_sweat_probe.py
+        ;;
+    gen-sweat-data)
+        echo "📊 Generating Sweat Training Data..."
+        python3 scripts/sweat/quadruplet_generator.py
+        ;;
+    vjepa)
+        shift
+        echo "🧠 Running V-JEPA 4-Model Ensemble..."
+        python3 scripts/vjepa/ensemble.py "$@"
+        ;;
+    fao-loop)
+        echo "🔄 Running 6-Stage FAO Loop..."
+        python3 scripts/sovereign/fao_loop.py
+        ;;
+    test-thermal)
+        echo "🌡️ Testing ThermalLoop..."
+        python3 scripts/sovereign/thermal_loop.py
+        ;;
+    test-memory)
+        echo "💾 Testing MemGovernor..."
+        python3 scripts/sovereign/mem_governor.py
+        ;;
+    *)
+        echo "Usage: $0 [query|fao|fao-loop|vjepa|test-*]"
+        echo ""
+        echo "  Core Commands:"
+        echo "    query <text>    - Axiom Inversion query"
+        echo "    fao <prompt>    - Verified generation (A-bind)"
+        echo "    fao-loop        - Full 6-stage FAO loop"
+        echo "    vjepa           - V-JEPA 4-model ensemble"
+        echo ""
+        echo "  Test Commands:"
+        echo "    test-sweat      - Liar's Sweat probe"
+        echo "    test-thermal    - ThermalLoop"
+        echo "    test-memory     - MemGovernor"
+        ;;
+esac
