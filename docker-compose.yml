@@ -1,0 +1,63 @@
+services:
+  # 1. Observability & Orchestration Core
+  prefect-server:
+    image: prefecthq/prefect:3.0-python3.11
+    command: prefect server start --host 0.0.0.0 --port 4200
+    ports:
+      - "4200:4200"
+    environment:
+      - PREFECT_API_URL=http://0.0.0.0:4200/api
+    volumes:
+      - ./data/prefect:/root/.prefect
+    networks:
+      - sovereign_mesh
+    restart: always
+
+  # 2. Unified Vector Storage
+  qdrant-server:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+    volumes:
+      - ./data/vector_store:/qdrant/storage
+    networks:
+      - sovereign_mesh
+    restart: always
+
+  # 3. Open WebUI (Human-Agent Interface)
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434 # For local model linking
+      - WEBUI_AUTH=True
+    ports:
+      - "3000:8080"
+    volumes:
+      - ./data/webui:/app/backend/data
+    networks:
+      - sovereign_mesh
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: always
+
+  # 4. The Agentic Swarm Processing Node
+  controlflow-agent-node:
+    build:
+      context: ./src
+      dockerfile: Dockerfile.agent
+    environment:
+      - PREFECT_API_URL=http://prefect-server:4200/api
+    env_file:
+      - .env
+    volumes:
+      - ./src:/app/src
+      - ./models:/app/models
+    depends_on:
+      - prefect-server
+      - qdrant-server
+    networks:
+      - sovereign_mesh
+
+networks:
+  sovereign_mesh:
+    driver: bridge

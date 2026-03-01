@@ -1,0 +1,9 @@
+FROM python:3.11-slim
+WORKDIR /app
+# Install system dependencies required for MLX/MPS compilation
+RUN apt-get update && apt-get install -y git build-essential gcc
+# Install Python ML and Orchestration frameworks
+RUN pip install --no-cache-dir torch transformers pillow numpy tqdm huggingface_hub diffusers[torch]
+RUN pip install --no-cache-dir controlflow prefect pydantic twelvelabs lancedb
+RUN pip install --no-cache-dir git+https://github.com/deepseek-ai/Janus.git
+CMD ["python", "src/swarm_orchestrator.py"]
